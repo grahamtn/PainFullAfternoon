@@ -10,11 +10,11 @@ import static org.junit.Assert.*;
 
 public class ItemParserTest {
 
-    private String rawSingleItem =    "naMe:Milk;price:3.23;type:Food;expiration:1/25/2016##";
+    private String rawSingleItem =    "naMe:BreaD;price:3.23;type:Food;expiration:1/25/2016##";
 
     private String rawSingleItemIrregularSeperatorSample = "naMe:MiLK;price:3.23;type:Food^expiration:1/11/2016##";
 
-    private String rawBrokenSingleItem =    "naMe:Milk;price:3.23;type:Food;expiration:1/25/2016##";
+    private String rawBrokenSingleItem =    "naMe:Co0kies;price:3.23;type:Food;expiration:1/25/2016##";
 
     private String rawMultipleItems = "naMe:Milk;price:3.23;type:Food;expiration:1/25/2016##"
                                       +"naME:BreaD;price:1.23;type:Food;expiration:1/02/2016##"
@@ -36,14 +36,16 @@ public class ItemParserTest {
 
     @Test
     public void parseStringIntoItemTest() throws ItemParseException{
-        Item expected = new Item("milk", 3.23, "food","1/25/2016");
+        Item expected = new Item("Bread", 3.23, "Food","1/25/2016");
         Item actual = itemParser.parseStringIntoItem(rawSingleItem);
         assertEquals(expected.toString(), actual.toString());
     }
 
-    @Test(expected = ItemParseException.class)
+    @Test
     public void parseBrokenStringIntoItemTest() throws ItemParseException{
-        itemParser.parseStringIntoItem(rawBrokenSingleItem);
+        Item expected = new Item("Cookies", 3.23, "Food", "1/25/2016");
+        Item actual =  itemParser.parseStringIntoItem(rawBrokenSingleItem);
+        assertEquals(expected.toString(), actual.toString());
     }
 
     @Test
@@ -59,4 +61,20 @@ public class ItemParserTest {
         Integer actual = itemParser.findKeyValuePairsInRawItemData(rawSingleItemIrregularSeperatorSample).size();
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void fixPriceTest(){
+        double expected = 0.0;
+        double actual = itemParser.fixPrice("");
+        assertEquals(expected,actual,0);
+    }
+
+    @Test
+    public void fixStringTest() throws ItemParseException {
+        String expected = "N/A";
+        String actual = itemParser.fixString("");
+        assertEquals(expected,actual);
+    }
+
+
 }
